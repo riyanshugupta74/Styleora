@@ -41,8 +41,8 @@ RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
 
 WORKDIR /var/www/html
 
-# Copy Laravel project
-COPY . .
+# Copy backend application
+COPY backend/ .
 
 # Install production PHP dependencies
 RUN composer install \
@@ -51,8 +51,9 @@ RUN composer install \
     --prefer-dist \
     --optimize-autoloader
 
-# Install frontend dependencies and build Vite
-RUN npm install && npm run build
+# Copy frontend & build React SPA into backend/public/spa
+COPY frontend/ ../frontend/
+RUN cd ../frontend && npm install && npm run build
 
 # Configure Apache to serve Laravel public directory
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
@@ -76,17 +77,12 @@ RUN printf '<Directory /var/www/html/public>\n\
 # Laravel permissions
 RUN chown -R www-data:www-data \
     storage \
-    bootstrap/cache
+    bootstrap/cache \
+    public/spa
 
 RUN chmod -R 775 \
     storage \
     bootstrap/cache
-
-# SQLite database permissions
-RUN mkdir -p database \
-    && touch database/database.sqlite \
-    && chown -R www-data:www-data database \
-    && chmod -R 775 database
 
 # Copy entrypoint script
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
