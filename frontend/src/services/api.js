@@ -1,17 +1,16 @@
 import axios from 'axios';
 
 const getBaseUrl = () => {
-    const defaultPort = '8000';
-    let base = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-    try {
-        const url = new URL(base);
-        if (typeof window !== 'undefined' && window.location.hostname) {
-            url.hostname = window.location.hostname;
-        }
-        return url.toString().replace(/\/$/, '');
-    } catch (e) {
-        return base;
+    if (import.meta.env.VITE_API_URL) {
+        return import.meta.env.VITE_API_URL.replace(/\/$/, '');
     }
+    if (typeof window !== 'undefined') {
+        // In production (deployed on Render, custom domain, etc.)
+        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+            return window.location.origin;
+        }
+    }
+    return 'http://localhost:8000';
 };
 
 const api = axios.create({
