@@ -1,0 +1,3 @@
+# Ignore SQLite databases except the application database
+*.sqlite*
+!database.sqlite 
