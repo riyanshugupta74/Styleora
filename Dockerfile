@@ -51,9 +51,9 @@ RUN composer install \
     --prefer-dist \
     --optimize-autoloader
 
-# Copy frontend & build React SPA into backend/public/spa
-COPY frontend/ ../frontend/
-RUN cd ../frontend && npm install && npm run build
+# Copy frontend & build React SPA directly into /var/www/html/public/spa
+COPY frontend/ ./frontend/
+RUN cd frontend && npm install && VITE_OUT_DIR=../public/spa npm run build
 
 # Configure Apache to serve Laravel public directory
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public

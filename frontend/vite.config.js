@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   build: {
-    outDir: '../backend/public/spa',
+    outDir: process.env.VITE_OUT_DIR || '../backend/public/spa',
     emptyOutDir: true,
   },
 })
