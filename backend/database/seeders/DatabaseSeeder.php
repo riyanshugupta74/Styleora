@@ -19,20 +19,24 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Create Users
-        User::factory()->create([
-            'name' => 'Admin User',
-            'email' => 'admin@styleora.com',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
-        ]);
+        // 1. Create Users (Idempotent)
+        User::firstOrCreate(
+            ['email' => 'admin@styleora.com'],
+            [
+                'name' => 'Admin User',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+            ]
+        );
         
-        User::factory()->create([
-            'name' => 'Test Customer',
-            'email' => 'customer@styleora.com',
-            'password' => Hash::make('password'),
-            'role' => 'customer',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'customer@styleora.com'],
+            [
+                'name' => 'Test Customer',
+                'password' => Hash::make('password'),
+                'role' => 'customer',
+            ]
+        );
 
         // 2. Categories & Subcategories
         $categories = [
@@ -44,18 +48,20 @@ class DatabaseSeeder extends Seeder
         $subcatMap = [];
 
         foreach ($categories as $catName => $subcats) {
-            $category = Category::create([
+            $category = Category::firstOrCreate([
+                'slug' => Str::slug($catName)
+            ], [
                 'name' => $catName,
-                'slug' => Str::slug($catName),
                 'status' => 1
             ]);
             $categoryMap[$catName] = $category->id;
 
             foreach ($subcats as $subName) {
-                $subcat = Subcategory::create([
+                $subcat = Subcategory::firstOrCreate([
+                    'slug' => Str::slug($category->name . ' ' . $subName)
+                ], [
                     'category_id' => $category->id,
                     'name' => $subName,
-                    'slug' => Str::slug($category->name . ' ' . $subName),
                     'status' => 1
                 ]);
                 $subcatMap[$catName . '-' . $subName] = $subcat->id;
@@ -66,9 +72,10 @@ class DatabaseSeeder extends Seeder
         $brands = ['Roadster', 'Puma', 'Nike', 'H&M', 'Zara', 'Biba', 'W', 'Levis', 'Allen Solly', 'Highlander'];
         $brandMap = [];
         foreach ($brands as $brandName) {
-            $brand = Brand::create([
+            $brand = Brand::firstOrCreate([
+                'slug' => Str::slug($brandName)
+            ], [
                 'name' => $brandName,
-                'slug' => Str::slug($brandName),
                 'status' => 1
             ]);
             $brandMap[$brandName] = $brand->id;
@@ -82,14 +89,14 @@ class DatabaseSeeder extends Seeder
         ];
         $colorMap = [];
         foreach ($colors as $name => $hex) {
-            $color = Color::create(['name' => $name, 'hex_code' => $hex]);
+            $color = Color::firstOrCreate(['name' => $name], ['hex_code' => $hex]);
             $colorMap[$name] = $color->id;
         }
 
         $sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
         $sizeMap = [];
         foreach ($sizes as $index => $size) {
-            $sz = Size::create(['name' => $size, 'display_order' => $index]);
+            $sz = Size::firstOrCreate(['name' => $size], ['display_order' => $index]);
             $sizeMap[$size] = $sz->id;
         }
 

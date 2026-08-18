@@ -63,8 +63,9 @@ RUN sed -ri \
     /etc/apache2/apache2.conf \
     /etc/apache2/conf-available/*.conf
 
-# Enable Apache rewrite
-RUN a2enmod rewrite
+# Enable Apache rewrite and suppress ServerName warning
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf \
+    && a2enmod rewrite
 
 # Allow Laravel public directory overrides
 RUN printf '<Directory /var/www/html/public>\n\
