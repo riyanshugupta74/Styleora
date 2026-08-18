@@ -260,7 +260,7 @@ const Header = () => {
                                             </div>
                                             {isAdmin && (
                                                 <>
-                                                    <a href={`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/admin`} className="flex items-center gap-2 mx-4 my-2 px-4 py-2 bg-gray-900 text-white text-sm font-bold rounded-md hover:bg-[#ff3f6c] transition">
+                                                    <a href="/admin" className="flex items-center gap-2 mx-4 my-2 px-4 py-2 bg-gray-900 text-white text-sm font-bold rounded-md hover:bg-[#ff3f6c] transition">
                                                         <i className="fa-solid fa-gauge"></i> Admin Dashboard
                                                     </a>
                                                     <div className="border-t border-gray-100 mt-1 mb-1"></div>
