@@ -24,8 +24,11 @@ class WishlistController extends Controller
             ->where('wishlist_id', $wishlist->id)
             ->get();
 
+        $products = $items->map(fn($item) => $item->product)->filter()->values();
+
         return response()->json([
             'items' => $items,
+            'products' => $products,
             'wishlistCount' => $items->count(),
         ]);
     }

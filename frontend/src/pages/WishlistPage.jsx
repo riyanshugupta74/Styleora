@@ -13,7 +13,8 @@ const WishlistPage = () => {
         setLoading(true);
         try {
             const response = await api.get('/api/wishlist');
-            setWishlistProducts(response.data.products || []);
+            const products = response.data.products || (response.data.items ? response.data.items.map(i => i.product).filter(Boolean) : []);
+            setWishlistProducts(products);
         } catch (error) {
             console.error('Failed to fetch wishlist', error);
             showToast('Failed to load wishlist', 'error');
